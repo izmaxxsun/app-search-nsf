@@ -6,10 +6,11 @@ from pathlib import Path
 import random
 from datetime import datetime, timedelta
 from elastic_enterprise_search import AppSearch
+from elasticsearch import Elasticsearch, helpers
 
 base_path = Path(__file__).parent
 file_path = (base_path / "arxiv-small.json").resolve()
-INDEX_NAME = "nsf-proposals"
+INDEX_NAME = "nsf-proposals-with-random-dates"
 
 def divide_chunks(l, n):
       
@@ -101,7 +102,6 @@ with open(file_path) as f:
         program_officer = random.choice(program_officers)
         nsf_received_date = data['update_date']
         nsf_received_date_obj = datetime.strptime(nsf_received_date, '%Y-%m-%d')
-
         random_days = random.randint(1,60)
         od_concur_date = nsf_received_date_obj + timedelta(days=random_days)
         reviewer_name = random.choice(reviewer_names)
@@ -118,31 +118,33 @@ with open(file_path) as f:
 
 batch_list = divide_chunks(doc_list, 100)
 
-app_search = AppSearch("https://izmaxx-hostrisk-8-1.ent.us-central1.gcp.cloud.es.io:9243",bearer_auth=os.environ.get('APP_SEARCH_API_KEY'))
+# app_search = AppSearch("https://izmaxx-hostrisk-8-1.ent.us-central1.gcp.cloud.es.io:9243",bearer_auth=os.environ.get('APP_SEARCH_API_KEY'))
 
-engine_info = app_search.get_engine(engine_name='nsf-testing')
-print(engine_info)
+# engine_info = app_search.get_engine(engine_name='nsf-testing')
+# print(engine_info)
+CLOUD_ID='izmaxx-hostrisk-81:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJDNmZWZmZGQ0ZjJjNDQ2OWI4ZjI2M2IyNDg5YWQ4NGY3JGMwNTA0ZTM0YTJkMDQxYjg4NjZlMWFiNWJlMTliYmM3'
+CLOUD_API_KEY='MXV4X0Y0RUJSdC1PNmxBcjVSZnE6d3Z4QVRZZ25UQTYxS2NDR3JENDBCZw=='
 
-for batch in batch_list:
-    app_search_result = app_search.index_documents(
-        engine_name="nsf-testing2",
-        documents=batch
-    )
+# for batch in batch_list:
+#     app_search_result = app_search.index_documents(
+#         engine_name="nsf-testing2",
+#         documents=batch
+#     )
 
-print(app_search_result)
-# es = Elasticsearch(cloud_id=os.environ['CLOUD_ID'],api_key=os.environ['CLOUD_API_KEY'])
-# result = es.ping()
-# print(result)
-# if result:
-#     print("Connected to Elasticsearch")
-#     try:
-#         resp = helpers.bulk(es, doc_list, index=INDEX_NAME)
-#         print ("helpers.bulk() RESPONSE:", resp)
-#         print ("helpers.bulk() RESPONSE:", json.dumps(resp, indent=4))
-#     except helpers.BulkIndexError as bulkIndexError:
-#         print("Indexing error: {0}".format(bulkIndexError))
-# else:
-#     print("Not connected")
+# print(app_search_result)
+es = Elasticsearch(cloud_id=CLOUD_ID,api_key=CLOUD_API_KEY)
+result = es.ping()
+print(result)
+if result:
+    print("Connected to Elasticsearch")
+    try:
+        resp = helpers.bulk(es, doc_list, index=INDEX_NAME)
+        print ("helpers.bulk() RESPONSE:", resp)
+        print ("helpers.bulk() RESPONSE:", json.dumps(resp, indent=4))
+    except helpers.BulkIndexError as bulkIndexError:
+        print("Indexing error: {0}".format(bulkIndexError))
+else:
+    print("Not connected")
 
 
 

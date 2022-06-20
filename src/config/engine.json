@@ -1,0 +1,40 @@
+{
+  "engineName": "nsf-testing2",
+  "endpointBase": "https://izmaxx-hostrisk-8-1.ent.us-central1.gcp.cloud.es.io",
+  "searchKey": "search-51181k8ord8jqfco2piefsqa",
+  "resultFields": [
+    "program_officer",
+    "proposal_id",
+    "pi_name",
+    "program_announcement",
+    "pi_institution",
+    "managing_program",
+    "title",
+    "requested_amount",
+    "division",
+    "od_concur_date",
+    "institution",
+    "institution_state",
+    "award_amount",
+    "reviewer_name",
+    "directorate",
+    "nsf_received_date",
+    "funding_program",
+    "funding_program_code",
+    "managing_program_code",
+    "status",
+    "id"
+  ],
+  "sortFields": [
+
+  ],
+  "facets": [
+    "directorate",
+    "managing_program_code",
+    "program_announcement",
+    "status",
+    "division"
+  ],
+  "titleField": "title",
+  "urlField": "program_announcement"
+}
